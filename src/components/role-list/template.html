@@ -1,0 +1,115 @@
+<div class="list-wrap">
+  <el-breadcrumb class="list-breadcrumd" separator-class="el-icon-arrow-right">
+    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item>权限管理</el-breadcrumb-item>
+    <el-breadcrumb-item>角色列表</el-breadcrumb-item>
+  </el-breadcrumb>
+  <el-row class="list-action">
+    <el-col :span="24">
+      <el-button
+        type="success"
+        @click="addRoleDialog = true">添加角色</el-button>
+    </el-col>
+  </el-row>
+  <el-table
+    :data="roleList"
+    style="width: 100%">
+    <el-table-column type="expand">
+      <template slot-scope="scope">
+        <!-- 一级权限 -->
+        <el-row
+          v-for="level1 in scope.row.children"
+          :key="level1.id"
+          class="role-level1">
+          <el-col :span="4">
+            <el-tag
+              closable
+              type="">
+              {{ level1.authName }}
+            </el-tag>
+            <i class="el-icon-arrow-right"></i>
+          </el-col>
+          <el-col :span="20">
+            <!-- 二级权限 -->
+            <el-row
+              v-for="level2 in level1.children"
+              :key="level2.id"
+              class="role-level2">
+              <el-col :span="4">
+                <el-tag
+                  closable
+                  type="success">
+                  {{ level2.authName }}
+                </el-tag>
+                <i class="el-icon-arrow-right"></i>
+              </el-col>
+              <!-- 三级权限 -->
+              <el-col :span="20">
+                <span
+                  v-for="level3 in level2.children"
+                  :key="level3.id"
+                  class="role-level3">
+                  <el-tag
+                  closable
+                  type="danger">
+                  {{ level3.authName }}
+                </el-tag>
+                  </span>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </template>
+      </el-table-column>
+      <el-table-column
+        label="#"
+        type="index">
+      </el-table-column>
+      <el-table-column
+        label="角色描述"
+        prop="roleName">
+      </el-table-column>
+      <el-table-column
+        label="描述"
+        prop="roleDesc">
+      </el-table-column>
+      <el-table-column
+        label="操作">
+        <template slot-scope="scope">
+          <el-button @click="showEditRoleDialog(scope.row)" size="mini" type="primary" palin>编辑</el-button>
+          <el-button @click="handleRemoveRole(scope.row)" size="mini" type="danger" palin>删除</el-button>
+          <el-button @click="showEditRightDialog(scope.row)" size="mini" type="warning" palin>授权</el-button>
+        </template>
+      </el-table-column>
+  </el-table>
+  <!-- 添加角色 -->
+  <el-dialog title="添加角色" :visible.sync="addRoleDialog">
+    <el-form :model="addRoleForm">
+      <el-form-item label="角色名称" prop="roleName" label-width="120px">
+        <el-input v-model="addRoleForm.roleName" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="角色描述" prop="roleDesc" label-width="120px">
+        <el-input v-model="addRoleForm.roleDesc" auto-complete="off"></el-input>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="addRoleDialog">
+      <el-button @click="addRoleDialog = false">取 消</el-button>
+      <el-button type="primary" @click="handleAddRole">确 定</el-button>
+    </div>
+  </el-dialog>
+  <!-- 编辑角色 -->
+  <el-dialog title="编辑角色" :visible.sync="editRoleDialog">
+    <el-form :model="editRoleForm">
+      <el-form-item label="角色名称" label-width="120px">
+        <el-input v-model="editRoleForm.roleName" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="角色描述" label-width="120px">
+        <el-input v-model="editRoleForm.roleDesc" auto-complete="off"></el-input>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="editRoleDialog = false">取 消</el-button>
+      <el-button type="primary" @click="handleEditRole">确 定</el-button>
+    </div>
+  </el-dialog>
+</div>  
